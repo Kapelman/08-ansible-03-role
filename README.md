@@ -1019,11 +1019,56 @@ localhost                  : ok=3    changed=2    unreachable=0    failed=0    s
 INFO     Pruning extra files from scenario ephemeral directory
 ```
 8. Выложите все roles в репозитории. Проставьте тэги, используя семантическую нумерацию.
+Решение:
+- Роли выложены в репозитарий:
+Elastic - https://github.com/Kapelman/elastic-role/tree/main
+Kibana - https://github.com/Kapelman/kibana-role
 
-9. Добавьте roles в `requirements.yml` в playbook.
-10. Переработайте playbook на использование roles.
-11. Выложите playbook в репозиторий.
-12. В ответ приведите ссылки на оба репозитория с roles и одну ссылку на репозиторий с playbook.
+Добавим роли и на galaxy.ansible
+
+![Ключ добавлен](Galaxy-role.jpg)
+
+10. Добавьте roles в `requirements.yml` в playbook.
+Решение:
+```
+vagrant@vagrant:~/ansible-lesson0703/playbook$ cat requirements.yml
+- src: git@github.com:netology-code/mnt-homeworks-ansible.git
+  scm: git
+  version: "1.0.1"
+  name: java
+- src: git@github.com:Kapelman/elastic-role.git
+  scm: git
+  name: elastic_role
+- src: git@github.com:Kapelman/kibana-role.git
+  scm: git
+  name: kibana_role
+ ```
+```
+vagrant@vagrant:~/ansible-lesson0703/playbook$ ansible-galaxy role install -r requirements.yml
+Starting galaxy role install process
+- java (1.0.1) is already installed, skipping.
+- extracting elastic_role to /home/vagrant/.ansible/roles/elastic_role
+- elastic_role was installed successfully
+- extracting kibana_role to /home/vagrant/.ansible/roles/kibana_role
+- kibana_role was installed successfully
+```
+11. Переработайте playbook на использование roles.
+Решение:
+```
+vagrant@vagrant:~/ansible-lesson0703/playbook$ cat playbook.yml
+---
+- hosts: all
+  roles:
+    - java
+  hosts: elasticsearch
+  roles:
+    - elastic_role
+  hosts: kibana
+  roles:
+    - kibana_role
+```
+12. Выложите playbook в репозиторий.
+13. В ответ приведите ссылки на оба репозитория с roles и одну ссылку на репозиторий с playbook.
 
 ## Необязательная часть
 
